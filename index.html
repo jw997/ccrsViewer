@@ -1,0 +1,428 @@
+<!doctype html>
+
+<head>
+
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no">
+	<style>
+		:root {
+			--displayCollisionChart: none;
+			--displayStopChart: inline-block;
+		}
+
+		.collisionChart {
+			/*display: var(--displayCollisionChart);*/
+		}
+
+		.stopChart {
+		/*	display: var(--displayStopChart);*/
+		}
+
+
+		body {
+			background-color: white;
+		}
+
+		.sansserif {
+			font-family: Verdana, Arial, Helvetica, sans-serif;
+		}
+
+		label,
+		select,
+		input,
+		#summary {
+			margin-left: 10px;
+		}
+
+		.button {
+			background-color: white;
+			border: 1PX SOLID black;
+			color: black;
+			padding: 5px 10px 5px 10px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: small;
+			margin: 4px 2vw;
+			border-radius: 99999vmax;
+			max-width: 33%;
+			min-width: calc(44px + 2rem);
+			min-height: 44px;
+			height: 44px;
+			visibility: visible;
+			box-sizing: border-box;
+			/* touch-action: none; 
+			
+			vertical-align: center;
+			-moz-box-align: center;
+			position: relative;*/
+
+		}
+
+		#saveanchor {
+			position: relative;
+			top: -2px;
+			padding-top: 7px;
+		}
+
+		.button:hover {
+			background-color: lightgrey;
+		}
+
+		.select {
+			font-size: small;
+			color: black;
+		}
+
+		.chart {
+			border: 1PX SOLID black;
+			margin: 10px;
+			/*display: var(--displayStopChart);*/
+		}
+
+		.info {
+			padding: 6px 8px;
+			font: 14px/16px Arial, Helvetica, sans-serif;
+			background: white;
+			background: rgba(255, 255, 255, 0.8);
+			box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+			border-radius: 5px;
+		}
+
+		.info h4 {
+			margin: 0 0 5px;
+			color: #777;
+		}
+
+		.legend {
+			line-height: 18px;
+			color: #555;
+		}
+
+		.legend i {
+			width: 18px;
+			height: 18px;
+			float: left;
+			margin-right: 8px;
+			opacity: 0.8;
+		}
+
+		#query-stuff {
+
+			background-color: rgb(96 139 168 / 0.5);
+
+			overflow-y: scroll;
+			border: 1px solid black;
+			/*
+			padding: 1em;
+			border: 5px solid red;
+*/
+		}
+
+		#osm-map {
+			border: 1px solid black;
+		}
+
+		#selectStreet {
+			display: block;
+		}
+
+		.grid-container {
+			display: grid;
+
+			grid-gap: 20px;
+			overflow-y: auto;
+
+		}
+
+		/* small devices */
+		@media only screen and (max-width: 991px) and (orientation: portrait) {
+			#osm-map {
+				grid-column: 1;
+				grid-row: 1;
+				max-height: 50vh;
+				max-width: 100vh;
+			}
+
+			#query-stuff {
+				grid-column: 1;
+				grid-row: 2;
+			}
+
+			.grid-container {
+				grid-template-rows: 50% 47%;
+				height: 98vh;
+			}
+		}
+
+		/*
+		@media only screen and (max-width: 991px) and (orientation: portrait){
+			#osm-map {
+				grid-column: 1;
+				grid-row: 1;
+				max-height: 40vh;
+				max-width: 100vh;
+			}
+
+			#query-stuff {
+				grid-column: 1;
+				grid-row: 2;
+			}
+
+			.grid-container {
+				grid-template-rows: 20rem 1fr;
+				height: 95vh;
+			}
+		}
+*/
+		@media only screen and (max-width: 991px) and (orientation: landscape) {
+			#osm-map {
+				grid-column: 1;
+				grid-row: 1;
+				max-height: 50vh;
+				max-width: 100vh;
+			}
+
+			#query-stuff {
+				grid-column: 1;
+				grid-row: 2;
+			}
+
+			.grid-container {
+				grid-template-rows: 50vh 1fr;
+				height: 85vh;
+			}
+		}
+
+		/* Large devices (laptops/desktops, 992px and up) */
+		@media only screen and (min-width: 992px) {
+			#osm-map {
+				grid-column: 2;
+				grid-row: 1;
+			}
+
+			#query-stuff {
+				grid-column: 1;
+				grid-row: 1;
+			}
+
+			.grid-container {
+				grid-template-columns: max(20rem, 25%) auto;
+				height: 98vh;
+			}
+
+			/*
+			.grid-container {
+				grid-template-columns: 20rem 1fr;
+				height: 98vh;
+			}*/
+		}
+	</style>
+
+	<!---
+	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+	<link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet" />
+
+	-->
+	<script src="./dependencies/leaflet/1.9.4/leaflet.js"></script>
+	<link href="./dependencies/leaflet/1.9.4/leaflet.css" rel="stylesheet" />
+
+	<link rel="stylesheet" href="./dependencies/legend/leaflet.legend.css" />
+	<script type="text/javascript" src="./dependencies/legend/leaflet.legend.js"></script>
+</head>
+
+<body class="sansserif body-container">
+	<div class="grid-container">
+		<div id="query-stuff">
+			<br />
+			<label>Pick City</label>
+
+			<br />
+			<select id="selectCity" class="select">
+				<!---
+					<option value="T">BPD Data</option>
+				<option value="C">State CCRS Data</option>
+				<option value="CUT">BPD union CCRS</option>
+				<option value="S">State SWITRS Data</option>
+				<option value="SUT">BPD union SWITRS</option>
+				<option value="STOPS">BPD Traffic Stops</option>
+					<option value="SNT">BPD intersect State</option>
+				<option value="TMS">BPD minus State</option>
+				<option value="SMT">State minus BPD</option> -->
+			</select>
+
+			<br />
+
+			<label>Pick years of data</label>
+			<br />
+<!-- ADD NEW YEAR -->
+			<input type="checkbox" id="check2025"> <label for="check2025">2025</label><br>
+			<input type="checkbox" id="check2024"> <label for="check2024">2024</label><br>
+			<input type="checkbox" id="check2023"> <label for="check2023">2023</label><br>
+			<input type="checkbox" id="check2022"> <label for="check2022">2022</label><br>
+			<input type="checkbox" id="check2021"> <label for="check2021">2021</label><br>
+			<input type="checkbox" id="check2020"> <label for="check2020">2020</label><br>
+			<input type="checkbox" id="check2019"> <label for="check2019">2019</label><br>
+			<input type="checkbox" id="check2018"> <label for="check2018">2018</label><br>
+			<input type="checkbox" id="check2017"> <label for="check2017">2017</label><br>
+			<input type="checkbox" id="check2016"> <label for="check2016">2016</label><br>
+			<input type="checkbox" id="check2015"> <label for="check2015">2015</label><br>
+
+
+
+			<br />
+			<label>Pick crash participants</label>
+			<br />
+			<select id="selectVehicleTypes" class="select">
+				<option value='.*'>Any</option>
+				<option value='Car'>Car/Any</option>
+				<option value='Bi.*Car|Car.*Bi'>Car/Bicycle</option>
+				<option value='Car.*Ped|Ped.*Car'>Car/Pedestrian</option>
+				<option value='Car.*Solo|Car.*Object'>Car/Solo</option>
+
+				<option value='Bi'>Bicycle/Any</option> // includes electric bike?
+				<option value='Bi.*Ped'>Bicycle/Pedestrian</option>
+				<option value='^Bicycle$|Bi.*Object|Bi.*Solo'>Bicycle/Solo</option>
+
+				<option value='Ped'>Pedestrian/Any</option>
+
+				<option value='Electric Bi'>Electric bicycle/Any</option>
+				<option value='Electric Bi.*Ped'>Electric bicycle/Pedestrian</option>
+				<option value='Electric Sc'>Electric Scooter/Any</option>
+				<option value='Electric Sc.*Ped'>Electric Scooter/Pedestrian</option>
+				<option value='Electric Skate'>Electric Skateboard/Any</option>
+				<option value='Electric Skate.*Ped'>Electric Skateboard/Pedestrian</option>
+
+				<option value='Motor'>Motorcycle/Any</option>
+				<option value='Motor.*Car'>Motorcycle/Car</option>
+
+				<option value='Truck'>Truck/Any</option>
+
+				<option value='Bus'>Bus/Any</option>
+				<option value='Police'>Police Car/Any</option>
+				<option value='Fire'>Firetruck/Any</option>
+				<option value='Ambulance'>Ambulance/Any</option>
+				<option value='School'>Schoolbus/Any</option>
+				<option value='Hit'>Hit and Run</option>
+			</select>
+			<br />
+
+			<label>Pick street</label>
+			<select id="selectStreet" class="select">
+				<option>Any</option>
+			</select>
+
+			<label>Pick crash severity</label>
+			<br />
+
+			<select id='severity' class="select">
+				<option value='Any'>Any</option>
+				<option value='Fatal'>Fatality</option>
+				<option value='Serious Injury'>Serious Injury</option>
+				<option value='Minor Injury'>Minor Injury</option>
+				<option value='Possible Injury'>Possible Injury</option>
+				<option value='No Injury'>Non-Injury</option>
+			</select>
+
+			<br />
+			<label>Pick stop result</label>
+			<br />
+
+			<select id='stopResult' class="select">
+				<option value='Any'>Any</option>
+				<option value='Arrest'>Arrest</option>
+				<option value='Citation'>Citation</option>
+				<option value='Warning'>Warning</option>
+				<option value='No Action'>No Action</option>
+			</select>
+
+			<br />
+			<button id="filterButton" class="button">Filter</button>
+			<a id='saveanchor' class='button' download='collisions.json'>Export</a>
+
+			<div id='summary'></div>
+
+			<!-- ADD NEW CHART -->
+			<div><canvas id="yearHist" class="chart"></canvas></div>
+			<div><canvas id="monthHist" class="chart"></canvas></div>
+			<div><canvas id="hourHist" class="chart"></canvas></div>
+			<div><canvas id="involvedObjectHist" class="chart collisionChart"></canvas></div>
+			<div><canvas id="severityHist" class="chart collisionChart"></canvas></div>
+
+			<div><canvas id="crashFaultHist" class="chart collisionChart"></canvas></div>
+			<div><canvas id="ageInjuryHist" class="chart collisionChart"></canvas></div>
+			
+
+			<div><canvas id="stopResultHist" class="chart stopChart"></canvas></div>
+
+			<div><canvas id="latHist" class="chart latChart"></canvas></div>
+			<div><canvas id="lonHist" class="chart lonChart"></canvas></div>
+
+
+			<div><canvas id="gpsHist" class="chart"></canvas></div>
+			<div><canvas id="gpsDelta" class="chart"></canvas></div>
+
+		</div>
+		<div id="osm-map"></div>
+	</div>
+
+	<!--- <script src="https://unpkg.com/chart.js@4.2.0/dist/chart.umd.js"></script> -->
+
+	<script src="./dependencies/chart/4.2.0/chart.umd.js"></script>
+
+	<script type="module">
+		import {
+			//mergedTransparencyJson,
+			redIcon, goldIcon, greenIcon,
+			//populateStreetSelect,
+			collisionPopup, map, handleFilterClick
+		} from "./js/util.js";
+
+		// BEGIN INIT STUFF
+		const selectStreet = document.querySelector('#selectStreet');
+	//	populateStreetSelect(mergedTransparencyJson, selectStreet);
+
+		// END INIT STUFF
+
+		document.querySelector('#filterButton').addEventListener('click', (event) => {
+			handleFilterClick();
+
+		});
+/*
+		document.querySelector('#selectData').addEventListener('change', (event) => {
+
+			console.log("Setting visisbility")
+
+			const dataSpec = document.querySelector('#selectData').value;
+
+			var r = document.querySelector(':root');
+
+
+			switch (selectData.value) {
+				case 'T':
+				case 'S':
+				case "SUT":
+					for (const elem of document.querySelectorAll('.stopChart')) {
+						elem.style.display = 'none';
+					}
+					for (const elem of document.querySelectorAll('.collisionChart')) {
+						elem.style.display = '';
+					}
+					break;
+				case "STOPS":
+					r.style.setProperty('--displayCollisionChart', 'none');
+					r.style.setProperty('--displayStopChart', 'inline-block');
+					for (const elem of document.querySelectorAll('.collisionChart')) {
+						elem.style.display = 'none';
+					}
+					for (const elem of document.querySelectorAll('.stopChart')) {
+						elem.style.display = '';
+					}
+					break;
+
+			};
+		})*/
+
+
+	</script>
+</body>
