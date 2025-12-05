@@ -1,0 +1,234 @@
+[
+  {
+    "county_code": 1,
+    "county_name": "Alameda County"
+  },
+  {
+    "county_code": 2,
+    "county_name": "Alpine County"
+  },
+  {
+    "county_code": 3,
+    "county_name": "Amador County"
+  },
+  {
+    "county_code": 4,
+    "county_name": "Butte County"
+  },
+  {
+    "county_code": 5,
+    "county_name": "Calaveras County"
+  },
+  {
+    "county_code": 6,
+    "county_name": "Colusa County"
+  },
+  {
+    "county_code": 7,
+    "county_name": "Contra Costa County"
+  },
+  {
+    "county_code": 8,
+    "county_name": "Del Norte County"
+  },
+  {
+    "county_code": 9,
+    "county_name": "El Dorado County"
+  },
+  {
+    "county_code": 10,
+    "county_name": "Fresno County"
+  },
+  {
+    "county_code": 11,
+    "county_name": "Glenn County"
+  },
+  {
+    "county_code": 12,
+    "county_name": "Humboldt County"
+  },
+  {
+    "county_code": 13,
+    "county_name": "Imperial County"
+  },
+  {
+    "county_code": 14,
+    "county_name": "Inyo County"
+  },
+  {
+    "county_code": 15,
+    "county_name": "Kern County"
+  },
+  {
+    "county_code": 16,
+    "county_name": "Kings County"
+  },
+  {
+    "county_code": 17,
+    "county_name": "Lake County"
+  },
+  {
+    "county_code": 18,
+    "county_name": "Lassen County"
+  },
+  {
+    "county_code": 19,
+    "county_name": "Los Angeles County"
+  },
+  {
+    "county_code": 20,
+    "county_name": "Madera County"
+  },
+  {
+    "county_code": 21,
+    "county_name": "Marin County"
+  },
+  {
+    "county_code": 22,
+    "county_name": "Mariposa County"
+  },
+  {
+    "county_code": 23,
+    "county_name": "Mendocino County"
+  },
+  {
+    "county_code": 24,
+    "county_name": "Merced County"
+  },
+  {
+    "county_code": 25,
+    "county_name": "Modoc County"
+  },
+  {
+    "county_code": 26,
+    "county_name": "Mono County"
+  },
+  {
+    "county_code": 27,
+    "county_name": "Monterey County"
+  },
+  {
+    "county_code": 28,
+    "county_name": "Napa County"
+  },
+  {
+    "county_code": 29,
+    "county_name": "Nevada County"
+  },
+  {
+    "county_code": 30,
+    "county_name": "Orange County"
+  },
+  {
+    "county_code": 31,
+    "county_name": "Placer County"
+  },
+  {
+    "county_code": 32,
+    "county_name": "Plumas County"
+  },
+  {
+    "county_code": 33,
+    "county_name": "Riverside County"
+  },
+  {
+    "county_code": 34,
+    "county_name": "Sacramento County"
+  },
+  {
+    "county_code": 35,
+    "county_name": "San Benito County"
+  },
+  {
+    "county_code": 36,
+    "county_name": "San Bernardino County"
+  },
+  {
+    "county_code": 37,
+    "county_name": "San Diego County"
+  },
+  {
+    "county_code": 38,
+    "county_name": "San Francisco County"
+  },
+  {
+    "county_code": 39,
+    "county_name": "San Joaquin County"
+  },
+  {
+    "county_code": 40,
+    "county_name": "San Luis Obispo County"
+  },
+  {
+    "county_code": 41,
+    "county_name": "San Mateo County"
+  },
+  {
+    "county_code": 42,
+    "county_name": "Santa Barbara County"
+  },
+  {
+    "county_code": 43,
+    "county_name": "Santa Clara County"
+  },
+  {
+    "county_code": 44,
+    "county_name": "Santa Cruz County"
+  },
+  {
+    "county_code": 45,
+    "county_name": "Shasta County"
+  },
+  {
+    "county_code": 46,
+    "county_name": "Sierra County"
+  },
+  {
+    "county_code": 47,
+    "county_name": "Siskiyou County"
+  },
+  {
+    "county_code": 48,
+    "county_name": "Solano County"
+  },
+  {
+    "county_code": 49,
+    "county_name": "Sonoma County"
+  },
+  {
+    "county_code": 50,
+    "county_name": "Stanislaus County"
+  },
+  {
+    "county_code": 51,
+    "county_name": "Sutter County"
+  },
+  {
+    "county_code": 52,
+    "county_name": "Tehama County"
+  },
+  {
+    "county_code": 53,
+    "county_name": "Trinity County"
+  },
+  {
+    "county_code": 54,
+    "county_name": "Tulare County"
+  },
+  {
+    "county_code": 55,
+    "county_name": "Tuolumne County"
+  },
+  {
+    "county_code": 56,
+    "county_name": "Ventura County"
+  },
+  {
+    "county_code": 57,
+    "county_name": "Yolo County"
+  },
+  {
+    "county_code": 58,
+    "county_name": "Yuba County"
+  }
+]
