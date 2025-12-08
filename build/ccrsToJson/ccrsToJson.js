@@ -376,7 +376,7 @@ function transformCrash(obj) {
 	var attrObj = {};
 	if (obj) {
 		attrObj.CollisionId = obj['Collision Id'];
-		attrObj.Case_ID = obj['Collision Id'];
+		//attrObj.Case_ID = obj['Collision Id'];
 		attrObj.Primary_Collision_Factor_Code = obj["Primary Collision Factor Violation"]
 
 		attrObj.Local_Report_Number = obj['Report Number']; // this would be the BPD transparency portal id

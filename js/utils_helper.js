@@ -505,6 +505,16 @@ const streetArray = [
 	"Yolo",
 	"Yosemite"];
 
+//const mapStreetPairToGPS = new Map();
+function makeKey(s1, s2) {
+	const key = s1.trim() + '/' + s2.trim();
+	return key;
+}
+
+/* utility functions */
+function fileNameIze(str) {
+	return str.replaceAll(' ', '_').replaceAll('/', '_');
+}
 
 
-export { getMS, getJson, streetArray };
+export { getMS, getJson, streetArray, makeKey, fileNameIze };
