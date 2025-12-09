@@ -14,6 +14,9 @@ const selectCity = document.querySelector('#selectCity');
 
 const selectVehicleTypes = document.querySelector('#selectVehicleTypes');
 
+const Year_First=2016;
+const Year_Last=2025;
+
 // ADD NEW YEAR
 const check2025 = document.querySelector('#check2025');
 const check2024 = document.querySelector('#check2024');
@@ -26,7 +29,7 @@ const check2019 = document.querySelector('#check2019');
 const check2018 = document.querySelector('#check2018');
 const check2017 = document.querySelector('#check2017');
 const check2016 = document.querySelector('#check2016');
-const check2015 = document.querySelector('#check2015');
+//const check2015 = document.querySelector('#check2015');
 
 const selectStreet = document.querySelector('#selectStreet');
 const selectSeverity = document.querySelector('#severity');
@@ -44,7 +47,7 @@ function populateSelect(selectData, select) {
 
 	// remove any existing options
 	const optionCount = select.options.length;
-	for (let i=0;i<optionCount;i++) {
+	for (let i = 0; i < optionCount; i++) {
 		select.options.remove(0)
 	}
 
@@ -62,15 +65,15 @@ const arrCounties = [];
 const arrCountyCityKeys = [];
 
 for (const obj of countyCityJSON) {
-	arrCounties.push( obj.countyName);
-	mapCountyToCities.set( obj.countyName, obj.cityNames);  
+	arrCounties.push(obj.countyName);
+	mapCountyToCities.set(obj.countyName, obj.cityNames);
 	for (const city of obj.cityNames) {
 		const k = makeKey(obj.countyName, city);
 		arrCountyCityKeys.push(k);
 	}
 }
 
-populateSelect( arrCounties, selectCounty);
+populateSelect(arrCounties, selectCounty);
 
 function getCitiesForCounty(county) {
 	return mapCountyToCities.get(county);
@@ -80,11 +83,11 @@ function getCitiesForCounty(county) {
 selectCounty.addEventListener('change', (event) => {
 	console.log("Select county changed to ", selectCounty.value);
 	const county = selectCounty.value;
-	const arrCities = ["Any","Unincorporated"].concat(getCitiesForCounty(county));
+	const arrCities = ["Any", "Unincorporated"].concat(getCitiesForCounty(county));
 	populateSelect(arrCities, selectCity)
 });
 
-function getStreetsForCountyCity( county, city) {
+function getStreetsForCountyCity(county, city) {
 	const k = makeKey(county, city);
 	const obj = mapCountyCityToStreets.get(k);
 	return obj.streets;
@@ -95,7 +98,7 @@ selectCity.addEventListener('change', (event) => {
 	console.log("Select city changed to ", selectCity.value);
 	const county = selectCounty.value;
 	const city = selectCity.value;
-	const arrStreets = ['Any'].concat(getStreetsForCountyCity( county, city));
+	const arrStreets = ['Any'].concat(getStreetsForCountyCity(county, city));
 	populateSelect(arrStreets, selectStreet)
 });
 
@@ -109,12 +112,12 @@ for (const k of arrCountyCityKeys) {
 	// make a file name out oof k
 	const locName = fileNameIze(k);
 	const fileName = 'data/streets/' + 'streets_' + locName + '.json';
-	
+
 	console.log("Reading streets file ", fileName)
 
 	const obj = await getJson(fileName);
-	mapCountyCityToStreets.set( k , obj)
-}	
+	mapCountyCityToStreets.set(k, obj)
+}
 getMS('read streets');
 
 
@@ -255,33 +258,77 @@ getMS();
 
 
 getMS();
+
+const mapCountyYearToData = new Map(); // key from MakeKey(county, year) county/year 
+
+async function getCCRSDataCache(year, county) {
+	const k = makeKey(county, year)
+	const cachedData = mapCountyYearToData.get(k)
+	
+	if (cachedData) {
+		return cachedData;
+	}
+
+	const file = './data/ccrsByCounty/ccrs' + year + '_' + fileNameIze(county) + '.json';
+
+	const ccrsJson = await getJson(file);
+	mapCountyYearToData.set(k,ccrsJson.features);
+
+	return ccrsJson.features;
+}
+
+async function loadCcrsData(years, county){
+	for (const y of years) {
+		await getCCRSDataCache(y, county);
+	}
+}
+
+// iterator for loaded data for a county
+function* makeCcrsIterator(county) {
+
+	let iterationCount = 0;
+
+	for (let y = Year_First; y <= Year_Last; y++) {
+		const k = makeKey(county, y);
+		if (mapCountyYearToData.has(k)) {
+			const data = mapCountyYearToData.get(k);
+			for (const datum of data) {
+				iterationCount++;
+				yield datum;
+			}
+		}
+	}
+	return iterationCount;
+  }
+
+
+
 async function getCCRSData() {
 	var arrays = [];
 	// ADD NEW YEAR
-	for (var y = 2024; y <= 2024; y++) {
+	for (var y = 2024; y <= 2025; y++) {
 		// const file = './data/ccrs/ccrs' + y + '.json';
-		 // const file = './data/ccrsOakland/addgps/ccrs' + y + '.json';
-		 const file = './data/ccrsAlamedaCounty/addgpsmulti/ccrs' + y + '.json';
-		 //const file = './data/ccrsLosAngelesCounty/ccrs' + y + '.json';
+		// const file = './data/ccrsOakland/addgps/ccrs' + y + '.json';
+		const file = './data/ccrsAlamedaCounty/addgpsmulti/ccrs' + y + '.json';
+		//const file = './data/ccrsLosAngelesCounty/ccrs' + y + '.json';
 		//const fileNames = ['ccrs/ccrs2025.json'];
 		//for (const fName of fileNames) {
 		//	const file = './data/' + fName;
-
 		// ccrs2024_Alameda_County.json 
 
-		for (const obj of countyCityJSON) {
-		   const file = './data/ccrsByCounty/ccrs' + y + '_' + fileNameIze(obj.countyName) +  '.json';
-			const ccrsJson = await getJson(file);
-			arrays.push(ccrsJson.features);
-
+		for (const { countyName: county } of countyCityJSON) {
+			//const file = './data/ccrsByCounty/ccrs' + y + '_' + fileNameIze(county) + '.json';
+		//	const ccrsJson = await getJson(file);
+			//arrays.push(ccrsJson.features);
+			const oneFile = await getCCRSDataCache(y,county)
+			arrays.push(oneFile);
 		}
-
 	}
 	const retval = [].concat(...arrays)
 	return retval;
 }
 
-const mergedCCRSJson = await (getCCRSData());
+const mergedCCRSJson = []; //await (getCCRSData());
 
 
 getMS('loading CCRS data')
@@ -292,7 +339,7 @@ for (const f of mergedCCRSJson) {
 }
 
 const arrCity = ['Any'];
-const newCities =  Array.from(setCityNames).sort();
+const newCities = Array.from(setCityNames).sort();
 for (const c of newCities) {
 	arrCity.push(c)
 }
@@ -324,7 +371,7 @@ const overrideJson = await getOverrideData();
 
 */
 
-
+/*
 function makeTimeStamp(c) {
 	const d = coll.attributes.Date;
 	const t = coll.attributes.Time;
@@ -400,7 +447,7 @@ const tsCcrs = makeTimeStampSet(mergedCCRSJson);
 const tsMapCcrs = makeTimeStampMap(mergedCCRSJson);
 
 getMS("Made time stamp sets")
-
+*/
 
 
 getMS();
@@ -625,17 +672,17 @@ function removeAllMakers() {
 	}
 }
 
-function removeStreetEndings( instr) { 
+function removeStreetEndings(instr) {
 
-	const thingsToRemove = [' AVENUE', ' STREET',  ' ROAD', ' COURT', ' BOULEVARD',' LANE', ' COURT', ' WAY'];  // to do add more
+	const thingsToRemove = [' AVENUE', ' STREET', ' ROAD', ' COURT', ' BOULEVARD', ' LANE', ' COURT', ' WAY'];  // to do add more
 	for (const p of thingsToRemove) {
-		if (instr.endsWith (p)) {
+		if (instr.endsWith(p)) {
 			const retval = instr.slice(0, -p.length)
 			return retval;
 		}
 	}
 }
-function checkFilter(coll, tsSet, vehTypeRegExp,
+function checkFilter(coll, vehTypeRegExp,
 	filter2025,
 	filter2024, filter2023,
 	filter2022, filter2021, filter2020,
@@ -643,7 +690,7 @@ function checkFilter(coll, tsSet, vehTypeRegExp,
 	filter2018,
 	filter2017,
 	filter2016,
-	filter2015,
+	//filter2015,
 
 	selectStreet, severity, selectStopResult, selectCity, selectCounty
 ) {
@@ -661,10 +708,10 @@ function checkFilter(coll, tsSet, vehTypeRegExp,
 	if ((selectCity != 'Any') && (attr.CityName != selectCity)) {
 		return false;
 	}
-
-	if (!tsSet.has(attr.DateTime)) {
-		return false;
-	}
+	/*
+		if (!tsSet.has(attr.DateTime)) {
+			return false;
+		}*/
 
 	const year = attr.Year;
 	if ((year == 2025) && !filter2025) {
@@ -707,54 +754,44 @@ function checkFilter(coll, tsSet, vehTypeRegExp,
 		return false;
 
 	}
-	if ((year == 2015) && !filter2015) {
-		return false;
-
-	}
-	if ((year < 2015) || (year > 2025)) {
-		return false;
-	}
-
-	if (coll.attributes.Stop_GlobalID) {
-		const loc = attr.Stop_Location;
-
-		if (selectStreet != "Any") {
-
-			if (selectStreet.includes('|')) {
-				const re = new RegExp(selectStreet, 'i');
-
-				if (!loc.match(re)) {
-					return false;
-				}
-			} else {
-				const m = loc.toUpperCase().includes(selectStreet.toUpperCase());
-				if (!m) {
-					return false;
-				}
-			}
-		}
-		if (selectStopResult != "Any") {
-
-			const res = getStopResultCategory(attr.Result_of_Stop);
-			if (res != selectStopResult) {
-				return false;
-			}
-		}
-
-		/*
-			if (coll.attributes.Result_of_Stop != 3) {
-
+	/*	if ((year == 2015) && !filter2015) {
 			return false;
-		}
-
-				const hour = parseInt(coll.attributes.Time);
-				//if (hour >= 6 &&  hour <= 10) {
-				if ((hour <= 5) || (hour >= 21 && hour <= 23)) {
-					return true;
-				}*/
-
-		return true;
+	
+		}*/
+	if ((year < 2016) || (year > 2025)) {
+		return false;
 	}
+	/*
+		if (coll.attributes.Stop_GlobalID) {
+			const loc = attr.Stop_Location;
+	
+			if (selectStreet != "Any") {
+	
+				if (selectStreet.includes('|')) {
+					const re = new RegExp(selectStreet, 'i');
+	
+					if (!loc.match(re)) {
+						return false;
+					}
+				} else {
+					const m = loc.toUpperCase().includes(selectStreet.toUpperCase());
+					if (!m) {
+						return false;
+					}
+				}
+			}
+			if (selectStopResult != "Any") {
+	
+				const res = getStopResultCategory(attr.Result_of_Stop);
+				if (res != selectStopResult) {
+					return false;
+				}
+			}
+	
+		
+	
+			return true;
+		}*/
 
 	const involved = attr.Involved_Objects;
 	const m = involved.match(vehTypeRegExp);
@@ -867,19 +904,19 @@ function gpsDistance(attr1, attr2) {
 }
 
 function floatFixed(f, d) {
-	return Number.parseFloat( f.toFixed(d));
+	return Number.parseFloat(f.toFixed(d));
 }
-function roundLoc( arr) {
+function roundLoc(arr) {
 	const digits = 4;
 	const retval = [floatFixed(arr[0], digits), floatFixed(arr[1], digits)];
 	return retval;
 }
-function addMarkers(CollsionsOrStops, collisionJson, tsSet, histYearData, histHourData, histFaultData, histAgeInjuryData,
+async function addMarkers(CollsionsOrStops, collisionJson, histYearData, histHourData, histFaultData, histAgeInjuryData,
 	vehTypeRegExp,
 	// ADD NEW YEAR
 	filter2025,
 	filter2024, filter2023, filter2022, filter2021, filter2020,
-	filter2019, filter2018, filter2017, filter2016, filter2015,
+	filter2019, filter2018, filter2017, filter2016, //filter2015,
 	selectStreet, selectSeverity, selectStopResult, selectCity, selectCounty
 
 ) {
@@ -890,15 +927,21 @@ function addMarkers(CollsionsOrStops, collisionJson, tsSet, histYearData, histHo
 	var skipped = 0, plotted = 0;
 
 	var arrMappedCollisions = [];
+	const arrYears = getYearSelection()
+	const county = selectCounty;
 
-	for (const coll of collisionJson) {
+	await loadCcrsData(arrYears, county);
+
+	const iter = makeCcrsIterator(county);
+
+	for (const coll of iter /* collisionJson*/ ) {
 		const attr = coll.attributes;
-		const checked = checkFilter(coll, tsSet, vehTypeRegExp,
+		const checked = checkFilter(coll, vehTypeRegExp,
 			// ADD NEW YEAR
 			filter2025,
 			filter2024, filter2023, filter2022, filter2021, filter2020,
-			filter2019, filter2018, filter2017, filter2016, filter2015,
-			selectStreet, selectSeverity, selectStopResult, selectCity,selectCounty);
+			filter2019, filter2018, filter2017, filter2016, //filter2015,
+			selectStreet, selectSeverity, selectStopResult, selectCity, selectCounty);
 		if (!checked) {
 			continue;
 		}
@@ -1094,7 +1137,7 @@ function addMarkers(CollsionsOrStops, collisionJson, tsSet, histYearData, histHo
 			markerCount++;
 		} else {
 			//histMissingGPSData.set(attr.Year, histMissingGPSData.get(attr.Year) + 1);
-			console.log("Missing gps for collision id:", attr.CollisionId, attr.Case_ID)  
+			console.log("Missing gps for collision id:", attr.CollisionId, attr.Case_ID)
 			incrementMapKey(histMissingGPSData, attr.Year);
 			skipped++;
 		}
@@ -1179,7 +1222,7 @@ const arrLatKeys = [0, 37.84, 37.85, 37.86, 37.87, 37.88, 37.89, 37.90, 37.91];
 
 
 var histLonData = new Map();
-const arrLonKeys = [-122.33, -122.32,  -122.31,  -122.30,  -122.29,  -122.28,  -122.27,  -122.26,  -122.25,  -122.24,  -122.23,  -122.22,  -122.21,  -122.20,  -122.19];
+const arrLonKeys = [-122.33, -122.32, -122.31, -122.30, -122.29, -122.28, -122.27, -122.26, -122.25, -122.24, -122.23, -122.22, -122.21, -122.20, -122.19];
 
 
 /* histogram data */
@@ -1283,7 +1326,22 @@ function createOrUpdateChart(data, chartVar, element, labelText) {
 }
 
 
-function handleFilterClick() {
+function getYearSelection() {
+	const years = [];
+	const checks = [check2016, check2017, check2018, check2019, check2020, check2021, check2022, check2023, check2024, check2025];
+	var year = 2016;
+
+	for (const c of checks) {
+		if (c.checked) {
+			years.push(year)
+		}
+		year++;
+	}
+
+	return years;
+}
+
+async function handleFilterClick() {
 	// ADD NEW CHART
 	clearHistYearData();
 	clearHistData(arrMonthKeys, histMonthData);
@@ -1298,7 +1356,7 @@ function handleFilterClick() {
 	clearHistData(arrLonKeys, histLonData);
 
 	//const dataSpec = selectData.value;
-	var tsSet;
+
 	var collData;
 
 	legendCrash.remove();
@@ -1307,48 +1365,24 @@ function handleFilterClick() {
 	var legend = legendCrash;
 	var bStops = false;
 
-	collData = mergedCCRSJson;
-			tsSet = tsCcrs;
-	/*
+	const years = getYearSelection();
+	const city = selectCity.value;
+	//const county = selectCounty.value;
 
+	//const arrYears = getYearSelection();
 
-	switch (selectData.value) {
-		case 'T':
-			collData = mergedTransparencyJson;
-			tsSet = tsTransparency;
-			break;
-		case 'C':
-			collData = mergedCCRSJson;
-			tsSet = tsCcrs;
-			break;
-		case 'S':
-			collData = mergedSWITRSJson;
-			tsSet = tsSwtrs;
-			break;
-		case "CUT":
-			collData = mergedUnionCcrs; // TODO UNION
-			tsSet = tsCcrsUnionTransparency;
-			break;
-		case "SUT":
-			collData = mergedUnionSwitrs; // TODO UNION
-			tsSet = tsSwtrsUnionTransparency;
-			break;
-		case "STOPS":
-			collData = mergedStopJson;
-			tsSet = tsStops;
-			//legend = legendStop;
-			bStops = true;
-			break;
+	//loadCcrsData(arrYears, county);
+
 	
-		default:
-			console.log("Unepxected data spec")
 
-	} */
+	collData = mergedCCRSJson;
+	//tsSet = tsCcrs;
+
 
 	const CollsionsOrStops = bStops ? 'Stops' : 'Collisions';
 
 	legend.addTo(map);
-	addMarkers(CollsionsOrStops, collData, tsSet, histYearData, histHourData, histFaultData, histAgeInjuryData,
+	await addMarkers(CollsionsOrStops, collData, histYearData, histHourData, histFaultData, histAgeInjuryData,
 
 		selectVehicleTypes.value,
 		// ADD NEW YEAR
@@ -1363,7 +1397,7 @@ function handleFilterClick() {
 		check2018.checked,
 		check2017.checked,
 		check2016.checked,
-		check2015.checked,
+		//	check2015.checked,
 
 		selectStreet.value,
 		selectSeverity.value,
@@ -1612,7 +1646,7 @@ const carIcon = L.icon({ iconUrl: './test/suv.png' });
 
 
 export {
-	 greenIcon, goldIcon, redIcon,
-	 collisionPopup,
+	greenIcon, goldIcon, redIcon,
+	collisionPopup,
 	map, handleFilterClick
 };

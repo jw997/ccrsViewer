@@ -507,7 +507,7 @@ const streetArray = [
 
 //const mapStreetPairToGPS = new Map();
 function makeKey(s1, s2) {
-	const key = s1.trim() + '/' + s2.trim();
+	const key = (''+s1).trim() + '/' + (''+s2).trim();
 	return key;
 }
 
