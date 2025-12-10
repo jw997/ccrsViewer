@@ -1,0 +1,25 @@
+{
+  "countyName": "Marin County",
+  "cityName": "Loma Verde",
+  "streets": [
+    "Alameda de la Loma",
+    "Alameda del Prado",
+    "Calle Arboleda",
+    "Calle Espinado",
+    "Calle Paseo",
+    "Calle de la Mesa",
+    "Calle de la Selva",
+    "Corte Alta",
+    "Corte Arriba",
+    "Corte Colina",
+    "Corte Escuela",
+    "Corte Norte",
+    "Corte Roble",
+    "Corte Sur",
+    "Corte del Cerro",
+    "Hector Lane",
+    "Via Escondido",
+    "Via Herbosa",
+    "Via del Plano"
+  ]
+}
