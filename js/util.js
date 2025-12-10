@@ -1,7 +1,5 @@
 import { getMS, getJson, makeKey, fileNameIze } from "./utils_helper.js";
 
-import { findClosest } from "./gpsaddr.js";
-
 // touch or mouse?
 let mql = window.matchMedia("(pointer: fine)");
 const pointerFine = mql.matches;
