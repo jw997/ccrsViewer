@@ -42,6 +42,11 @@ const saveanchor = document.getElementById('saveanchor')
 const countyCityJsonFile = './data/county_cities.json';
 const countyCityJSON = await getJson(countyCityJsonFile);
 
+// test get a file from other repo
+const testurl = 'https://jw997.github.io/osm-intersections/data/intersections/intersections_alamedacounty.json'
+
+const testJson = await getJson(testurl);
+
 // populate the city select
 function populateSelect(selectData, select) {
 
@@ -269,8 +274,22 @@ async function getCCRSDataCache(year, county) {
 		return cachedData;
 	}
 
-	const file = './data/ccrsByCounty/ccrs' + year + '_' + fileNameIze(county) + '.json';
 
+	//  https://raw.githubusercontent.com/jw997/ccrsData/refs/heads/main/test/ccrs    2024_Alameda_County.json
+
+	//https://jw997.github.io/ccrsData/test/ccrs2024_Alameda_County.json
+
+	//  http://127.0.0.1:8087/test/ccrs    2024_Alameda_County.json
+
+
+
+	// const file = './data/ccrsByCounty/ccrs' + year + '_' + fileNameIze(county) + '.json';
+	//const file = 'https://raw.githubusercontent.com/jw997/ccrsData/refs/heads/main/test/ccrs' + year + '_' + fileNameIze(county) + '.json';
+	 const file = 'https://jw997.github.io/ccrsData/data/ccrs' + year + '_' + fileNameIze(county) + '.json';
+
+	//const file = 'http://127.0.0.1:8087/data/ccrs' + year + '_' + fileNameIze(county) + '.json';
+	
+	
 	const ccrsJson = await getJson(file);
 	mapCountyYearToData.set(k,ccrsJson.features);
 
@@ -515,35 +534,29 @@ console.log("tsTransparencyMinusSwtrs: ", tsTransparencyMinusSwtrs.size);
 //const mergedTransparencyJson = mergedSWITRSJson;
 
 const popupFields = ['Date',
-	'Time',// 'Hour',
-	//'Day_of_Week',
+	'Time',
+	
 	'Case_Number',
-	'Case_ID',
+
 	'Local_Report_Number',
 	'Accident_Location',
 	'Accident_Location_Offset',
 	'CityName',
 	'Latitude',
 	'Longitude',
-	//'Collision_Classification_Descri',
-	//'Collision_Type',
+
 	'Primary_Collision_Factor_Code',
 	'PCF_Description',
-	//	'PCF_Category',
+
 	'Involved_Objects',
-	//'Involved_Parties',
+	
 	'Party_at_Fault',
 	'Number_of_Injuries',
 	'Number_of_Fatalities',
-	//'Suspected_Serious_Injury',
+	
 	'Injury_Severity',
 	"Injury_Ages",
-	"url",
-	"Traffic_Violation_Offense_Code_",
-	"Type_Of_Stop", "bGeoPointAddress", "bGeneralLocationDesc",
-	"ReasonForStopNarrative",
-	"Result_of_Stop_text",
-	"Stop_Location"
+	"url"
 
 
 ];
@@ -1137,7 +1150,7 @@ async function addMarkers(CollsionsOrStops, collisionJson, histYearData, histHou
 			markerCount++;
 		} else {
 			//histMissingGPSData.set(attr.Year, histMissingGPSData.get(attr.Year) + 1);
-			console.log("Missing gps for collision id:", attr.CollisionId, attr.Case_ID)
+			console.log("Missing gps for collision id:", attr.CollisionId)
 			incrementMapKey(histMissingGPSData, attr.Year);
 			skipped++;
 		}
