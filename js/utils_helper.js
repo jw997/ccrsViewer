@@ -25,6 +25,26 @@ async function getJson(url) {
 	}
 }
 
+const mapUrlToPromise = new Map();
+
+async function startFetch(url) {
+	const prom = await fetch(url);
+	mapUrlToPromise.set(url,prom);
+	return;
+}
+async function resolveFetchJson(url) {
+	const response = mapUrlToPromise.get(url);
+	try {
+		if (!response.ok) {
+			throw new Error(`Response status: ${response.status}`);
+		}
+
+		const json = await response.json();
+		return json;
+	} catch (error) {
+		console.error(error.message);
+	}
+}
 const streetArray = [
 
 
@@ -517,4 +537,4 @@ function fileNameIze(str) {
 }
 
 
-export { getMS, getJson, streetArray, makeKey, fileNameIze };
+export { getMS, getJson, streetArray, makeKey, fileNameIze, startFetch, resolveFetchJson };

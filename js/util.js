@@ -1,4 +1,4 @@
-import { getMS, getJson, makeKey, fileNameIze } from "./utils_helper.js";
+import { getMS, getJson, makeKey, fileNameIze, startFetch, resolveFetchJson } from "./utils_helper.js";
 
 // touch or mouse?
 let mql = window.matchMedia("(pointer: fine)");
@@ -83,32 +83,47 @@ function getCitiesForCounty(county) {
 }
 
 /* when county select changes, populate the city */
-selectCounty.addEventListener('change', (event) => {
+function handleSelectCountyChange(event) {
 	console.log("Select county changed to ", selectCounty.value);
 	const county = selectCounty.value;
 	const arrCities = ["Any", "Unincorporated"].concat(getCitiesForCounty(county));
 	populateSelect(arrCities, selectCity)
+}
+selectCounty.addEventListener('change', (event) => {
+	handleSelectCountyChange(event);
 });
 
-function getStreetsForCountyCity(county, city) {
+handleSelectCountyChange(null); // populate the city select 
+const mapCountyCityToStreets = new Map();
+
+async function getStreetsForCountyCity(county, city) {
 	const k = makeKey(county, city);
+	if (!mapCountyCityToStreets.has(k)) {
+		// try to resolve the promise
+		const locName = fileNameIze(k);
+		const fileName = 'data/streets/' + 'streets_' + locName + '.json';
+
+		const json = await resolveFetchJson(fileName);
+
+		mapCountyCityToStreets.set(k, json);
+	}
 	const obj = mapCountyCityToStreets.get(k);
 	return obj.streets;
 }
 
 /* when city changes,  fill the streets */
-selectCity.addEventListener('change', (event) => {
+selectCity.addEventListener('change', async (event) => {
 	console.log("Select city changed to ", selectCity.value);
 	const county = selectCounty.value;
 	const city = selectCity.value;
-	const arrStreets = ['Any'].concat(getStreetsForCountyCity(county, city));
+	const arrStreets = ['Any'].concat(await getStreetsForCountyCity(county, city));
 	populateSelect(arrStreets, selectStreet)
 });
 
 
 /* read streets for each county / city */
 getMS();
-const mapCountyCityToStreets = new Map();
+
 
 for (const k of arrCountyCityKeys) {
 	console.log(k);
@@ -117,9 +132,10 @@ for (const k of arrCountyCityKeys) {
 	const fileName = 'data/streets/' + 'streets_' + locName + '.json';
 
 	console.log("Reading streets file ", fileName)
+    startFetch( fileName);  // saves the promise in a map
 
-	const obj = await getJson(fileName);
-	mapCountyCityToStreets.set(k, obj)
+	//const obj =  getJson(fileName);  // get the promise
+//	mapCountyCityToStreets.set(k, obj)
 }
 getMS('read streets');
 
