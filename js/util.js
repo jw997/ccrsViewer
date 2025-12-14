@@ -67,10 +67,12 @@ const mapCountyToCities = new Map();
 const arrCounties = [];
 const arrCountyCityKeys = [];
 
+const UNINCORPORATED = 'Unincorporated';
+
 for (const obj of countyCityJSON) {
 	arrCounties.push(obj.countyName);
 	mapCountyToCities.set(obj.countyName, obj.cityNames);
-	for (const city of obj.cityNames) {
+	for (const city of [UNINCORPORATED].concat( obj.cityNames)) {
 		const k = makeKey(obj.countyName, city);
 		arrCountyCityKeys.push(k);
 	}
