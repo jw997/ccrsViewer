@@ -576,14 +576,40 @@ const popupFields = ['Date',
 
 
 ];
+
+function makeAnchorForCVC(pcf) {
+
+	if (!pcf) {
+		return '';
+	}
+	const arrMatches = pcf.match(/[0-9]{5}/);
+
+	if (!arrMatches) {
+		return '';
+	}
+
+	if (arrMatches.length>0) {
+		const cvc = arrMatches[0]
+		const anchor  = '<a target="_blank" href="https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=VEH&sectionNum=' + cvc + '">' +
+				 cvc+ '</a>';
+		return anchor;
+	}
+
+	return '';
+
+
+}
 function collisionPopup(obj) {
 	var msg = "";
+	const cvc = makeAnchorForCVC(''+obj.Primary_Collision_Factor_Code)
 	for (const k of popupFields) {
 		const v = obj[k];
 		if (v) {
 			msg += (k + ': ' + v + '<br>');
 		}
 	}
+	msg += cvc;
+
 	return msg;
 }
 
@@ -710,6 +736,7 @@ function removeStreetEndings(instr) {
 			return retval;
 		}
 	}
+	return instr;
 }
 function checkFilter(coll, vehTypeRegExp,
 	filter2025,
@@ -728,7 +755,12 @@ function checkFilter(coll, vehTypeRegExp,
 	//if (coll.attributes.Stop_GlobalID) {
 	//	return true;
 	//}
+
 	const attr = coll.attributes;
+
+	/*if (attr.CollisionId == 4864123) {
+		console.log("Found it ");
+	}*/
 
 	if ((selectCounty != 'Any') && (attr.CountyName != selectCounty)) {
 		return false;
