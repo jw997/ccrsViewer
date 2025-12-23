@@ -10,15 +10,6 @@
 			--displayStopChart: inline-block;
 		}
 
-		.collisionChart {
-			/*display: var(--displayCollisionChart);*/
-		}
-
-		.stopChart {
-		/*	display: var(--displayStopChart);*/
-		}
-
-
 		body {
 			background-color: white;
 		}
@@ -113,10 +104,7 @@
 
 			overflow-y: scroll;
 			border: 1px solid black;
-			/*
-			padding: 1em;
-			border: 5px solid red;
-*/
+		
 		}
 
 		#osm-map {
@@ -219,11 +207,6 @@
 		}
 	</style>
 
-	<!---
-	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-	<link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet" />
-
-	-->
 	<script src="./dependencies/leaflet/1.9.4/leaflet.js"></script>
 	<link href="./dependencies/leaflet/1.9.4/leaflet.css" rel="stylesheet" />
 
@@ -251,10 +234,7 @@
 			<input type="checkbox" id="check2018"> <label for="check2018">2018</label><br>
 			<input type="checkbox" id="check2017"> <label for="check2017">2017</label><br>
 			<input type="checkbox" id="check2016"> <label for="check2016">2016</label><br>
-		<!--	<input type="checkbox" id="check2015"> <label for="check2015">2015</label><br> -->
-
-
-
+	
 			<br />
 			<label>Pick crash participants</label>
 			<br />
@@ -312,7 +292,7 @@
 			<br />
 			<label>Pick stop result</label>
 			<br />
-
+<!--
 			<select id='stopResult' class="select">
 				<option value='Any'>Any</option>
 				<option value='Arrest'>Arrest</option>
@@ -320,7 +300,7 @@
 				<option value='Warning'>Warning</option>
 				<option value='No Action'>No Action</option>
 			</select>
-
+		-->
 			<br />
 			<button id="filterButton" class="button">Filter</button>
 			<a id='saveanchor' class='button' download='collisions.json'>Export</a>
@@ -338,14 +318,14 @@
 			<div><canvas id="ageInjuryHist" class="chart collisionChart"></canvas></div>
 			
 
-			<div><canvas id="stopResultHist" class="chart stopChart"></canvas></div>
+		<!--	<div><canvas id="stopResultHist" class="chart stopChart"></canvas></div>-->
 
 			<div><canvas id="latHist" class="chart latChart"></canvas></div>
 			<div><canvas id="lonHist" class="chart lonChart"></canvas></div>
 
 
 			<div><canvas id="gpsHist" class="chart"></canvas></div>
-			<div><canvas id="gpsDelta" class="chart"></canvas></div>
+				<!--	<div><canvas id="gpsDelta" class="chart"></canvas></div> -->
 
 		</div>
 		<div id="osm-map"></div>
