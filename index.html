@@ -290,17 +290,6 @@
 			</select>
 
 			<br />
-			<label>Pick stop result</label>
-			<br />
-<!--
-			<select id='stopResult' class="select">
-				<option value='Any'>Any</option>
-				<option value='Arrest'>Arrest</option>
-				<option value='Citation'>Citation</option>
-				<option value='Warning'>Warning</option>
-				<option value='No Action'>No Action</option>
-			</select>
-		-->
 			<br />
 			<button id="filterButton" class="button">Filter</button>
 			<a id='saveanchor' class='button' download='collisions.json'>Export</a>
@@ -317,8 +306,6 @@
 			<div><canvas id="crashFaultHist" class="chart collisionChart"></canvas></div>
 			<div><canvas id="ageInjuryHist" class="chart collisionChart"></canvas></div>
 			
-
-		<!--	<div><canvas id="stopResultHist" class="chart stopChart"></canvas></div>-->
 
 			<div><canvas id="latHist" class="chart latChart"></canvas></div>
 			<div><canvas id="lonHist" class="chart lonChart"></canvas></div>
@@ -337,57 +324,16 @@
 
 	<script type="module">
 		import {
-			//mergedTransparencyJson,
+	
 			redIcon, goldIcon, greenIcon,
-			//populateStreetSelect,
+		
 			collisionPopup, map, handleFilterClick
 		} from "./js/util.js";
 
 		// BEGIN INIT STUFF
-		const selectStreet = document.querySelector('#selectStreet');
-	//	populateStreetSelect(mergedTransparencyJson, selectStreet);
+		
 
 		// END INIT STUFF
-
-		document.querySelector('#filterButton').addEventListener('click', (event) => {
-			handleFilterClick();
-
-		});
-/*
-		document.querySelector('#selectData').addEventListener('change', (event) => {
-
-			console.log("Setting visisbility")
-
-			const dataSpec = document.querySelector('#selectData').value;
-
-			var r = document.querySelector(':root');
-
-
-			switch (selectData.value) {
-				case 'T':
-				case 'S':
-				case "SUT":
-					for (const elem of document.querySelectorAll('.stopChart')) {
-						elem.style.display = 'none';
-					}
-					for (const elem of document.querySelectorAll('.collisionChart')) {
-						elem.style.display = '';
-					}
-					break;
-				case "STOPS":
-					r.style.setProperty('--displayCollisionChart', 'none');
-					r.style.setProperty('--displayStopChart', 'inline-block');
-					for (const elem of document.querySelectorAll('.collisionChart')) {
-						elem.style.display = 'none';
-					}
-					for (const elem of document.querySelectorAll('.stopChart')) {
-						elem.style.display = '';
-					}
-					break;
-
-			};
-		})*/
-
 
 	</script>
 </body>

@@ -1579,6 +1579,11 @@ async function handleFilterClick() {
 
 }
 
+document.querySelector('#filterButton').addEventListener('click', (event) => {
+	handleFilterClick();
+
+});
+
 function handleExportClick() {
 	handleFilterClick();
 }
