@@ -10,6 +10,28 @@ function getMS(msg) {
 	return diff;
 }
 
+function truncateFloat(f, fractionDigits) {
+	return parseFloat(f.toFixed(fractionDigits))
+}
+
+
+function getHeapLimit() {
+	if (performance && performance.memory) {
+		return  ' ' + truncateFloat(performance.memory.jsHeapSizeLimit / 1048576, 1) + " Megabytes"
+	
+	}
+	return 'Heap Limit not available'
+}
+
+function getHeapUsed() {
+	if (performance && performance.memory) {
+		
+		return ' ' + truncateFloat(performance.memory.usedJSHeapSize / 1048576, 1) + " Megabytes"
+	
+		
+	}
+	return 'Heap used not available'
+}
 
 async function getJson(url) {
 	try {
@@ -537,4 +559,4 @@ function fileNameIze(str) {
 }
 
 
-export { getMS, getJson, streetArray, makeKey, fileNameIze, startFetch, resolveFetchJson };
+export { getMS, getJson, streetArray, makeKey, fileNameIze, startFetch, resolveFetchJson, getHeapLimit, getHeapUsed, truncateFloat };
