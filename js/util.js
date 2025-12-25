@@ -1,4 +1,4 @@
-import { getMS, getJson, makeKey, fileNameIze, startFetch, resolveFetchJson } from "./utils_helper.js";
+import { getMS, getJson, makeKey, fileNameIze, startFetch, resolveFetchJson, getHeapUsed, getHeapLimit } from "./utils_helper.js";
 
 // touch or mouse?
 let mql = window.matchMedia("(pointer: fine)");
@@ -310,6 +310,14 @@ async function getCCRSDataCache(year, county) {
 	mapCountyYearToData.set(k,ccrsJson.features);
 
 	return ccrsJson.features;
+}
+
+function countLoadedCrashses() {
+	var count = 0;
+	for (const [k,v] of mapCountyYearToData.entries()) {
+		count += v.length
+	}
+	return count;
 }
 
 async function loadCcrsData(years, county){
@@ -725,6 +733,7 @@ function removeAllMakers() {
 	for (const m of markers) {
 		m.remove();
 	}
+	markers.length = 0;  // allow markers to be garbage collected
 }
 
 function removeStreetEndings(instr) {
@@ -1208,7 +1217,9 @@ async function addMarkers(CollsionsOrStops, collisionJson, histYearData, histHou
 	console.log('Plotted', plotted);
 	console.log("markerCount ", markerCount)
 
-	const summaryMsg = '<br>Matching ' + CollsionsOrStops + ': ' + plotted;//+ '<br>' + 'Skipped: ' + skipped + '<br>';
+	const summaryMsg = '<br>Matching ' + CollsionsOrStops + ': ' + plotted //;//+ '<br>' + 'Skipped: ' + skipped + '<br>';
+	  + '<br>Crashes Loaded: ' + countLoadedCrashses() 
+	  + '<br>Heap Used: ' + getHeapUsed();
 	summary.innerHTML = summaryMsg;
 
 	// set array for download
