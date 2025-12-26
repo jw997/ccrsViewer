@@ -12,8 +12,8 @@ const selectCity = document.querySelector('#selectCity');
 
 const selectVehicleTypes = document.querySelector('#selectVehicleTypes');
 
-const Year_First=2016;
-const Year_Last=2025;
+const Year_First = 2016;
+const Year_Last = 2025;
 
 // ADD NEW YEAR
 const check2025 = document.querySelector('#check2025');
@@ -31,7 +31,7 @@ const check2016 = document.querySelector('#check2016');
 
 const selectStreet = document.querySelector('#selectStreet');
 const selectSeverity = document.querySelector('#severity');
-//const selectStopResult = document.querySelector('#stopResult');
+
 
 const summary = document.querySelector('#summary');
 
@@ -72,7 +72,7 @@ const UNINCORPORATED = 'Unincorporated';
 for (const obj of countyCityJSON) {
 	arrCounties.push(obj.countyName);
 	mapCountyToCities.set(obj.countyName, obj.cityNames);
-	for (const city of [UNINCORPORATED].concat( obj.cityNames)) {
+	for (const city of [UNINCORPORATED].concat(obj.cityNames)) {
 		const k = makeKey(obj.countyName, city);
 		arrCountyCityKeys.push(k);
 	}
@@ -134,10 +134,10 @@ for (const k of arrCountyCityKeys) {
 	const fileName = 'data/streets/' + 'streets_' + locName + '.json';
 
 	console.log("Reading streets file ", fileName)
-    startFetch( fileName);  // saves the promise in a map
+	startFetch(fileName);  // saves the promise in a map
 
 	//const obj =  getJson(fileName);  // get the promise
-//	mapCountyCityToStreets.set(k, obj)
+	//	mapCountyCityToStreets.set(k, obj)
 }
 getMS('read streets');
 
@@ -180,15 +180,6 @@ const violet = "#9400d3";//"#EE82EE";
 const black = "#000000";
 
 const grey = "#101010";
-
-const stopNoAction = "No Action"
-const stopCitation = "Citation"
-const stopWarning = "Warning"
-const stopArrest = "Arrest"
-const stopUnkown = "unknown"
-
-
-
 
 function getOptionsForSeverity(sev) {
 	var colorValue;
@@ -285,7 +276,7 @@ const mapCountyYearToData = new Map(); // key from MakeKey(county, year) county/
 async function getCCRSDataCache(year, county) {
 	const k = makeKey(county, year)
 	const cachedData = mapCountyYearToData.get(k)
-	
+
 	if (cachedData) {
 		return cachedData;
 	}
@@ -301,26 +292,26 @@ async function getCCRSDataCache(year, county) {
 
 	// const file = './data/ccrsByCounty/ccrs' + year + '_' + fileNameIze(county) + '.json';
 	//const file = 'https://raw.githubusercontent.com/jw997/ccrsData/refs/heads/main/test/ccrs' + year + '_' + fileNameIze(county) + '.json';
-	 const file = 'https://jw997.github.io/ccrsData/data/ccrs' + year + '_' + fileNameIze(county) + '.json';
+	const file = 'https://jw997.github.io/ccrsData/data/ccrs' + year + '_' + fileNameIze(county) + '.json';
 
 	//const file = 'http://127.0.0.1:8087/data/ccrs' + year + '_' + fileNameIze(county) + '.json';
-	
-	
+
+
 	const ccrsJson = await getJson(file);
-	mapCountyYearToData.set(k,ccrsJson.features);
+	mapCountyYearToData.set(k, ccrsJson.features);
 
 	return ccrsJson.features;
 }
 
 function countLoadedCrashses() {
 	var count = 0;
-	for (const [k,v] of mapCountyYearToData.entries()) {
+	for (const [k, v] of mapCountyYearToData.entries()) {
 		count += v.length
 	}
 	return count;
 }
 
-async function loadCcrsData(years, county){
+async function loadCcrsData(years, county) {
 	for (const y of years) {
 		await getCCRSDataCache(y, county);
 	}
@@ -342,7 +333,7 @@ function* makeCcrsIterator(county) {
 		}
 	}
 	return iterationCount;
-  }
+}
 
 
 
@@ -361,9 +352,9 @@ async function getCCRSData() {
 
 		for (const { countyName: county } of countyCityJSON) {
 			//const file = './data/ccrsByCounty/ccrs' + y + '_' + fileNameIze(county) + '.json';
-		//	const ccrsJson = await getJson(file);
+			//	const ccrsJson = await getJson(file);
 			//arrays.push(ccrsJson.features);
-			const oneFile = await getCCRSDataCache(y,county)
+			const oneFile = await getCCRSDataCache(y, county)
 			arrays.push(oneFile);
 		}
 	}
@@ -414,84 +405,6 @@ const overrideJson = await getOverrideData();
 
 */
 
-/*
-function makeTimeStamp(c) {
-	const d = coll.attributes.Date;
-	const t = coll.attributes.Time;
-
-	if (!d || !t) {
-		console.log("collision with missing date time ", coll);
-		return undefined;
-	} else {
-		const str = d + ' ' + t;
-		const ts = Date.parse(str);
-		return ts;
-	}
-
-}
-
-function makeTimeStampSet(arr) {
-	var setTimeStamps = new Set();
-	for (const coll of arr) {
-		const d = coll.attributes.Date;
-		const t = coll.attributes.Time;
-
-		if (!d || !t) {
-			console.log("collision with missing date time ", coll);
-		} else {
-			const str = d + ' ' + t;
-			const ts = Date.parse(str);
-			if (setTimeStamps.has(str)) {
-				console.log("collsion with dupe date time ", coll);
-
-			} else {
-				setTimeStamps.add(ts);
-				if (!coll.attributes.DateTime) {
-					coll.attributes.DateTime = ts;
-				}
-			}
-		}
-	}
-	return setTimeStamps;
-}
-
-function makeTimeStampMap(arr) {
-	var setTimeStamps = new Map();
-	for (const coll of arr) {
-		const d = coll.attributes.Date;
-		const t = coll.attributes.Time;
-
-		if (!d || !t) {
-			console.log("collision with missing date time ", coll);
-		} else {
-			const str = d + ' ' + t;
-			const ts = Date.parse(str);
-			if (setTimeStamps.has(str)) {
-				console.log("collsion with dupe date time ", coll);
-
-			} else {
-				setTimeStamps.set(ts, coll);
-				if (!coll.attributes.DateTime) {
-					coll.attributes.DateTime = ts;
-				}
-			}
-		}
-	}
-	return setTimeStamps;
-}
-getMS();
-// make set of swtrs collision time stamps
-const tsCcrs = makeTimeStampSet(mergedCCRSJson);
-
-
-
-
-// make maps of ts to coll
-const tsMapCcrs = makeTimeStampMap(mergedCCRSJson);
-
-getMS("Made time stamp sets")
-*/
-
 
 getMS();
 
@@ -529,37 +442,9 @@ function applyOverrides(overrides) {
 //applyOverrides(overrideJson);
 getMS();
 
-/*
-const tsSwrtsIntersectionTransparency = tsSwtrs.intersection(tsTransparency);
-const tsSwtrsMinusTransparency = tsSwtrs.difference(tsTransparency);
-const tsTransparencyMinusSwtrs = tsTransparency.difference(tsSwtrs);
-*/
-// for union, start with switrs and ccrs
-
-
-
-
-/*
-console.log(" mergedUnion: ", mergedUnion.length);
-
-console.log("Swtrs time stamps: ", tsSwtrs.size);
-console.log("Transparency time stamps: ", tsTransparency.size);
-
-console.log("tsSwtrsUnionTransparency: ", tsSwtrsUnionTransparency.size);
-console.log("tsSwrtsIntersectionTransparency :", tsSwrtsIntersectionTransparency.size);
-
-console.log("tsSwtrsMinusTransparency: ", tsSwtrsMinusTransparency.size);
-
-console.log("tsTransparencyMinusSwtrs: ", tsTransparencyMinusSwtrs.size);
-*/
-
-
-
-//const mergedTransparencyJson = mergedSWITRSJson;
-
 const popupFields = ['Date',
 	'Time',
-	
+
 	'Case_Number',
 
 	'Local_Report_Number',
@@ -573,16 +458,14 @@ const popupFields = ['Date',
 	'PCF_Description',
 
 	'Involved_Objects',
-	
+
 	'Party_at_Fault',
 	'Number_of_Injuries',
 	'Number_of_Fatalities',
-	
+
 	'Injury_Severity',
 	"Injury_Ages",
 	"url"
-
-
 ];
 
 function makeAnchorForCVC(pcf) {
@@ -596,10 +479,10 @@ function makeAnchorForCVC(pcf) {
 		return '';
 	}
 
-	if (arrMatches.length>0) {
+	if (arrMatches.length > 0) {
 		const cvc = arrMatches[0]
-		const anchor  = '<a target="_blank" href="https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=VEH&sectionNum=' + cvc + '">' +
-				 cvc+ '</a>';
+		const anchor = '<a target="_blank" href="https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=VEH&sectionNum=' + cvc + '">' +
+			cvc + '</a>';
 		return anchor;
 	}
 
@@ -609,7 +492,7 @@ function makeAnchorForCVC(pcf) {
 }
 function collisionPopup(obj) {
 	var msg = "";
-	const cvc = makeAnchorForCVC(''+obj.Primary_Collision_Factor_Code)
+	const cvc = makeAnchorForCVC('' + obj.Primary_Collision_Factor_Code)
 	for (const k of popupFields) {
 		const v = obj[k];
 		if (v) {
@@ -757,19 +640,10 @@ function checkFilter(coll, vehTypeRegExp,
 	filter2016,
 	//filter2015,
 
-	selectStreet, severity, /*selectStopResult,*/ selectCity, selectCounty
+	selectStreet, severity, selectCity, selectCounty
 ) {
 
-	// for traffic stops, just return true
-	//if (coll.attributes.Stop_GlobalID) {
-	//	return true;
-	//}
-
 	const attr = coll.attributes;
-
-	/*if (attr.CollisionId == 4864123) {
-		console.log("Found it ");
-	}*/
 
 	if ((selectCounty != 'Any') && (attr.CountyName != selectCounty)) {
 		return false;
@@ -778,10 +652,6 @@ function checkFilter(coll, vehTypeRegExp,
 	if ((selectCity != 'Any') && (attr.CityName != selectCity)) {
 		return false;
 	}
-	/*
-		if (!tsSet.has(attr.DateTime)) {
-			return false;
-		}*/
 
 	const year = attr.Year;
 	if ((year == 2025) && !filter2025) {
@@ -824,44 +694,10 @@ function checkFilter(coll, vehTypeRegExp,
 		return false;
 
 	}
-	/*	if ((year == 2015) && !filter2015) {
-			return false;
-	
-		}*/
+
 	if ((year < 2016) || (year > 2025)) {
 		return false;
 	}
-	/*
-		if (coll.attributes.Stop_GlobalID) {
-			const loc = attr.Stop_Location;
-	
-			if (selectStreet != "Any") {
-	
-				if (selectStreet.includes('|')) {
-					const re = new RegExp(selectStreet, 'i');
-	
-					if (!loc.match(re)) {
-						return false;
-					}
-				} else {
-					const m = loc.toUpperCase().includes(selectStreet.toUpperCase());
-					if (!m) {
-						return false;
-					}
-				}
-			}
-			if (selectStopResult != "Any") {
-	
-				const res = getStopResultCategory(attr.Result_of_Stop);
-				if (res != selectStopResult) {
-					return false;
-				}
-			}
-	
-		
-	
-			return true;
-		}*/
 
 	const involved = attr.Involved_Objects;
 	const m = involved.match(vehTypeRegExp);
@@ -891,17 +727,6 @@ function checkFilter(coll, vehTypeRegExp,
 	var acceptableSeverities = [];
 	// if coll has unspecifed severity, but switrs gives a severity use that instead
 	var coll_severity = attr.Injury_Severity;
-
-	if (coll_severity == 'Unspecified Injury') {
-		if (coll.switrsRecord) {
-			coll_severity = coll.switrsRecord.attributes.Injury_Severity
-		}
-	}
-	/*
-		if (attr.NumberKilled>0) {
-			coll_severity = 'Fatal';
-			attr.Injury_Severity = 'Fatal'
-		} */
 
 	acceptableSeverities.push('Fatal');
 
@@ -938,9 +763,6 @@ function checkFilter(coll, vehTypeRegExp,
 		if (coll_severity != 'No Injury') {
 			return false;
 		}
-		/*if ((attr.Number_of_Injuries != 0) || (attr.Number_of_Fatalities != 0)) {
-			return false;
-		}*/
 	}
 	return true;
 }
@@ -948,13 +770,6 @@ function checkFilter(coll, vehTypeRegExp,
 const LatitudeDefault = 37.868412;
 const LongitudeDefault = -122.349938;
 
-function isStopAttr(a) {
-	if (a.Stop_GlobalID) {
-		return true;
-	}
-	return false;
-
-}
 function incrementMapKey(m, k) {
 	m.set(k, m.get(k) + 1);
 }
@@ -981,13 +796,13 @@ function roundLoc(arr) {
 	const retval = [floatFixed(arr[0], digits), floatFixed(arr[1], digits)];
 	return retval;
 }
-async function addMarkers(CollsionsOrStops, collisionJson, histYearData, histHourData, histFaultData, histAgeInjuryData,
+async function addMarkers( collisionJson, histYearData, histHourData, histFaultData, histAgeInjuryData,
 	vehTypeRegExp,
 	// ADD NEW YEAR
 	filter2025,
 	filter2024, filter2023, filter2022, filter2021, filter2020,
 	filter2019, filter2018, filter2017, filter2016, //filter2015,
-	selectStreet, selectSeverity, /*selectStopResult, */selectCity, selectCounty
+	selectStreet, selectSeverity, selectCity, selectCounty
 
 ) {
 	removeAllMakers();
@@ -1004,14 +819,14 @@ async function addMarkers(CollsionsOrStops, collisionJson, histYearData, histHou
 
 	const iter = makeCcrsIterator(county);
 
-	for (const coll of iter /* collisionJson*/ ) {
+	for (const coll of iter /* collisionJson*/) {
 		const attr = coll.attributes;
 		const checked = checkFilter(coll, vehTypeRegExp,
 			// ADD NEW YEAR
 			filter2025,
 			filter2024, filter2023, filter2022, filter2021, filter2020,
-			filter2019, filter2018, filter2017, filter2016, //filter2015,
-			selectStreet, selectSeverity,/* selectStopResult,*/ selectCity, selectCounty);
+			filter2019, filter2018, filter2017, filter2016, 
+			selectStreet, selectSeverity, selectCity, selectCounty);
 		if (!checked) {
 			continue;
 		}
@@ -1037,35 +852,30 @@ async function addMarkers(CollsionsOrStops, collisionJson, histYearData, histHou
 		const hour = 3 * Math.floor(attr.Hour / 3);
 		//console.log ( "Hour is " , attr.Hour, ' ' , attr.Case_Number);
 		incrementMapKey(histHourData, hour);
-/*
-		if (isStopAttr(attr)) {
-			incrementMapKey(histStopResultData, getStopResultCategory(attr.Result_of_Stop));
-		}*/
 
-		if (!isStopAttr(attr)) {
-			//histFaultData.set(attr.Party_at_Fault, histFaultData.get(attr.Party_at_Fault) + 1);
-			incrementMapKey(histFaultData, attr.Party_at_Fault);
-			//histSeverityData.set(attr.Injury_Severity, histSeverityData.get(attr.Injury_Severity) + 1);
-			incrementMapKey(histSeverityData, attr.Injury_Severity);
-			for (const v of arrObjectKeys) {
-				if (attr.Involved_Objects.includes(v)) {
+		//histFaultData.set(attr.Party_at_Fault, histFaultData.get(attr.Party_at_Fault) + 1);
+		incrementMapKey(histFaultData, attr.Party_at_Fault);
+		//histSeverityData.set(attr.Injury_Severity, histSeverityData.get(attr.Injury_Severity) + 1);
+		incrementMapKey(histSeverityData, attr.Injury_Severity);
+		for (const v of arrObjectKeys) {
+			if (attr.Involved_Objects.includes(v)) {
 
-					histObjectData.set(v, histObjectData.get(v) + 1);
-				}
+				histObjectData.set(v, histObjectData.get(v) + 1);
 			}
-
-			//histAgeInjuryData
-			const ageStr = attr.Injury_Ages;
-			if (ageStr) {
-				// split 
-				const ages = ageStr.split("/");
-				for (const a of ages) {
-					const k = 10 * Math.floor(a / 10);
-					incrementMapKey(histAgeInjuryData, k);
-				}
-			}
-
 		}
+
+		//histAgeInjuryData
+		const ageStr = attr.Injury_Ages;
+		if (ageStr) {
+			// split 
+			const ages = ageStr.split("/");
+			for (const a of ages) {
+				const k = 10 * Math.floor(a / 10);
+				incrementMapKey(histAgeInjuryData, k);
+			}
+		}
+
+
 
 
 		// lat data
@@ -1096,48 +906,28 @@ async function addMarkers(CollsionsOrStops, collisionJson, histYearData, histHou
 			}
 		}
 
-/*
-		var gpsError;
-
-		if (coll.localRecord) {
-			gpsError = gpsDistance(attr, coll.localRecord.attributes)
-		}
-		if (coll.ccrsRecord) {
-			gpsError = gpsDistance(attr, coll.ccrsRecord.attributes)
-		}
-
-		// add gpsError to histogram
-		if (gpsError) {
-			const bin = getGpsDeltaBin(gpsError)
-			incrementMapKey(histGPSDeltaData, bin);
-		}
-	*/
+		/*
+				var gpsError;
+		
+				if (coll.localRecord) {
+					gpsError = gpsDistance(attr, coll.localRecord.attributes)
+				}
+				if (coll.ccrsRecord) {
+					gpsError = gpsDistance(attr, coll.ccrsRecord.attributes)
+				}
+		
+				// add gpsError to histogram
+				if (gpsError) {
+					const bin = getGpsDeltaBin(gpsError)
+					incrementMapKey(histGPSDeltaData, bin);
+				}
+			*/
 		// if lat  or long is missing, try the linked coll record
 		var lat = attr.Latitude;
-		if (!lat) {
-			if (coll.localRecord) {
-				lat = coll.localRecord.attributes.Latitude;
 
-			}
-		}
-		if (!lat) {
-			if (coll.switrsRecord) {
-				lat = coll.switrsRecord.attributes.Latitude;
-			}
-		}
 		//const long = attr.Latitude ?? coll.switrsColl.Latitude ?? coll.localColl.Latitude;
 		var long = attr.Longitude;
-		if (!long) {
-			if (coll.localRecord) {
-				long = coll.localRecord.attributes.Longitude;
-			}
 
-		}
-		if (!long) {
-			if (coll.switrsRecord) {
-				long = coll.switrsRecord.attributes.Longitude;
-			}
-		}
 
 		if (lat && long) {
 			const loc = [lat, long];
@@ -1150,53 +940,15 @@ async function addMarkers(CollsionsOrStops, collisionJson, histYearData, histHou
 
 			var marker;
 
-			if (!isStopAttr(attr)) {
-				//var myMarker = getIconForSeverity(attr.Injury_Severity);
-				//marker = L.marker([lat + ct * 0.0001, long - ct * 0.0001],
-				//		{ icon: myMarker });
+			const opt = getOptionsForSeverity(attr.Injury_Severity);
+			marker = L.circleMarker([lat + ct * 0.0001, long - ct * 0.0001], opt
 
-				const opt = getOptionsForSeverity(attr.Injury_Severity);
-
-
-
-				marker = L.circleMarker([lat + ct * 0.0001, long - ct * 0.0001], opt
-					/*	{
-						color: '#3388ff',
-						radius: 5,
-						fill: true,
-						fillOpacity: 1
-					}
-					*/
-				);
-
-			} else {
-				//myMarker = getIconForStop(attr.Result_of_Stop);
-				const opt = getOptionsForStop(attr.Result_of_Stop);
-
-				marker = L.circleMarker([lat + ct * 0.0001, long - ct * 0.0001], opt /*{
-					color: '#3388ff',
-					radius: 5,
-					fill: true,
-					fillOpacity: 0.5
-				}*/
-				);
-
-			}
-			/*const marker = L.marker([lat + ct * 0.0001, long - ct * 0.0001],
-				{ icon: myMarker });*/
+			);
 
 			markersAtLocation.set(JSON.stringify(roundLoc(loc)), ct + 1);
 			var msg = collisionPopup(attr);
-			if (coll.switrsRecord) {
-				const msg2 = collisionPopup(coll.switrsRecord.attributes);
-				msg += '<br>Switrs properties:<br>' + msg2;
-			} else if (coll.localRecord) {
-				const msg2 = collisionPopup(coll.localRecord.attributes);
-				msg += '<br>BPD properties:<br>' + msg2;
-			}
 
 			if (pointerFine) {
-
 				//marker.bindTooltip(msg).openTooltip(); can copy from tooltip!
 				marker.bindPopup(msg).openPopup();
 			} else {
@@ -1208,7 +960,7 @@ async function addMarkers(CollsionsOrStops, collisionJson, histYearData, histHou
 			markerCount++;
 		} else {
 			//histMissingGPSData.set(attr.Year, histMissingGPSData.get(attr.Year) + 1);
-		//	console.log("Missing gps for collision id:", attr.CollisionId)
+			//	console.log("Missing gps for collision id:", attr.CollisionId)
 			incrementMapKey(histMissingGPSData, attr.Year);
 			skipped++;
 		}
@@ -1217,9 +969,9 @@ async function addMarkers(CollsionsOrStops, collisionJson, histYearData, histHou
 	console.log('Plotted', plotted);
 	console.log("markerCount ", markerCount)
 
-	const summaryMsg = '<br>Matching ' + CollsionsOrStops + ': ' + plotted //;//+ '<br>' + 'Skipped: ' + skipped + '<br>';
-	  + '<br>Crashes Loaded: ' + countLoadedCrashses() 
-	  + '<br>Heap Used: ' + getHeapUsed();
+	const summaryMsg = '<br>Matching Collsions: ' + plotted //;//+ '<br>' + 'Skipped: ' + skipped + '<br>';
+		+ '<br>Crashes Loaded: ' + countLoadedCrashses()
+		+ '<br>Heap Used: ' + getHeapUsed();
 	summary.innerHTML = summaryMsg;
 
 	// set array for download
@@ -1271,9 +1023,6 @@ var histObjectData = new Map();
 var histAgeInjuryData = new Map();  // bars 0-9, 10-19, 20-, 30, 40, 50, 60, 70, 80+
 const arrAgeKeys = [0, 10, 20, 30, 40, 50, 60, 70, 80];
 
-//var histStopResultData = new Map();
-//const arrStopResultKeys = [stopArrest, stopCitation, stopWarning, stopNoAction, stopUnkown];
-
 
 const arrSeverityKeys = [
 	"Unspecified Injury",
@@ -1311,7 +1060,7 @@ function clearHistData(keys, data) {
 clearHistData(arrObjectKeys, histObjectData);
 clearHistData(arrSeverityKeys, histSeverityData);
 clearHistData(arrAgeKeys, histAgeInjuryData);
-//clearHistData(arrStopResultKeys, histStopResultData);
+
 clearHistData(arrHourKeys, histHourData);
 clearHistData(arrMonthKeys, histMonthData);
 //clearHistData(arrGPSDeltaKeys, histGPSDeltaData);
@@ -1358,7 +1107,6 @@ var histObjectChart;
 var histSeverityChart;
 var histAgeInjuryChart;
 
-//var histStopResultChart;
 
 var histLatChart;
 var histLonChart;
@@ -1425,7 +1173,6 @@ async function handleFilterClick() {
 	clearHistData(arrObjectKeys, histObjectData);
 	clearHistData(arrSeverityKeys, histSeverityData);
 	clearHistData(arrAgeKeys, histAgeInjuryData);
-	//clearHistData(arrStopResultKeys, histStopResultData);
 	//clearHistData(arrGPSDeltaKeys, histGPSDeltaData);
 	clearHistData(arrLatKeys, histLatData);
 	clearHistData(arrLonKeys, histLonData);
@@ -1435,29 +1182,20 @@ async function handleFilterClick() {
 	var collData;
 
 	legendCrash.remove();
-	//legendStop.remove();
 
 	var legend = legendCrash;
-	var bStops = false;
+	
 
 	const years = getYearSelection();
 	const city = selectCity.value;
 	//const county = selectCounty.value;
-
 	//const arrYears = getYearSelection();
-
 	//loadCcrsData(arrYears, county);
 
-	
-
 	collData = mergedCCRSJson;
-	//tsSet = tsCcrs;
-
-
-	const CollsionsOrStops = bStops ? 'Stops' : 'Collisions';
 
 	legend.addTo(map);
-	await addMarkers(CollsionsOrStops, collData, histYearData, histHourData, histFaultData, histAgeInjuryData,
+	await addMarkers( collData, histYearData, histHourData, histFaultData, histAgeInjuryData,
 
 		selectVehicleTypes.value,
 		// ADD NEW YEAR
@@ -1476,7 +1214,7 @@ async function handleFilterClick() {
 
 		selectStreet.value,
 		selectSeverity.value,
-	//	selectStopResult.value,
+		
 		selectCity.value,
 		selectCounty.value
 	);
@@ -1496,11 +1234,8 @@ async function handleFilterClick() {
 	for (const k of arrSeverityKeys) {
 		dataSeverity.push({ bar: k, count: histSeverityData.get(k) })
 	}
-/*
-	const dataStopResult = [];
-	for (const k of arrStopResultKeys) {
-		dataStopResult.push({ bar: k, count: histStopResultData.get(k) })
-	}*/
+	/*
+		
 
 	/*const dataGPSDelta = [];
 	for (const k of arrGPSDeltaKeys) {
@@ -1521,16 +1256,16 @@ async function handleFilterClick() {
 		dataByYear.push({ bar: bar, count: histYearData.get(bar) });
 	}
 
+	const CollsionsHistLabel = 'Collisions';
 
-
-	histYearChart = createOrUpdateChart(dataByYear, histYearChart, document.getElementById('yearHist'), CollsionsOrStops + ' by Year');
+	histYearChart = createOrUpdateChart(dataByYear, histYearChart, document.getElementById('yearHist'), CollsionsHistLabel + ' by Year');
 
 	const dataByMonth = [];
 	for (const k of arrMonthKeys) {
 		dataByMonth.push({ bar: k, count: histMonthData.get(k) })
 	}
 
-	histMonthChart = createOrUpdateChart(dataByMonth, histMonthChart, document.getElementById('monthHist'), CollsionsOrStops + ' by Month');
+	histMonthChart = createOrUpdateChart(dataByMonth, histMonthChart, document.getElementById('monthHist'), CollsionsHistLabel + ' by Month');
 
 
 	const dataByHour = [];
@@ -1538,7 +1273,7 @@ async function handleFilterClick() {
 		dataByHour.push({ bar: k, count: histHourData.get(k) })
 	}
 
-	histHourChart = createOrUpdateChart(dataByHour, histHourChart, document.getElementById('hourHist'), CollsionsOrStops + ' by Hour');
+	histHourChart = createOrUpdateChart(dataByHour, histHourChart, document.getElementById('hourHist'), CollsionsHistLabel + ' by Hour');
 
 	const dataGPSByYear = [];
 	// ADD NEW YEAR
@@ -1549,7 +1284,7 @@ async function handleFilterClick() {
 	histChartGPS = createOrUpdateChart(dataGPSByYear, histChartGPS, document.getElementById('gpsHist'), 'Missing GPS by Year');
 	//ageInjuryHist
 
-// histChartGPSDelta = createOrUpdateChart(dataGPSDelta, histChartGPSDelta, document.getElementById('gpsDelta'), 'GPS Delta');
+	// histChartGPSDelta = createOrUpdateChart(dataGPSDelta, histChartGPSDelta, document.getElementById('gpsDelta'), 'GPS Delta');
 
 
 	const dataInjurybyAge = [];
@@ -1559,14 +1294,13 @@ async function handleFilterClick() {
 
 	histAgeInjuryChart = createOrUpdateChart(dataInjurybyAge, histAgeInjuryChart, document.getElementById('ageInjuryHist'), 'Injury by Age');
 
-	//histStopResultChart = createOrUpdateChart(dataStopResult, histStopResultChart, document.getElementById('stopResultHist'), 'Stop Results');
-
+	
 	const dataByLat = [];
 	for (const k of arrLatKeys) {
 		dataByLat.push({ bar: k, count: histLatData.get(k) })
 	}
 
-	histLatChart = createOrUpdateChart(dataByLat, histLatChart, document.getElementById('latHist'), CollsionsOrStops + ' by Latitude');
+	histLatChart = createOrUpdateChart(dataByLat, histLatChart, document.getElementById('latHist'), CollsionsHistLabel + ' by Latitude');
 
 
 	const dataByLon = [];
@@ -1574,7 +1308,7 @@ async function handleFilterClick() {
 		dataByLon.push({ bar: k, count: histLonData.get(k) })
 	}
 
-	histLonChart = createOrUpdateChart(dataByLon, histLonChart, document.getElementById('lonHist'), CollsionsOrStops + ' by Longitude');
+	histLonChart = createOrUpdateChart(dataByLon, histLonChart, document.getElementById('lonHist'), CollsionsHistLabel + ' by Longitude');
 
 
 }
