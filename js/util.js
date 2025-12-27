@@ -831,6 +831,9 @@ async function addMarkers( collisionJson, histYearData, histHourData, histFaultD
 	selectStreet, selectSeverity, selectCity, selectCounty
 
 ) {
+	getMS();
+	summary.innerHTML = '<br>Processing...'
+
 	removeAllMakers();
 	const markersAtLocation = new Map();
 	// add collisions to map
@@ -948,10 +951,8 @@ async function addMarkers( collisionJson, histYearData, histHourData, histFaultD
 					incrementMapKey(histGPSDeltaData, bin);
 				}
 			*/
-		// if lat  or long is missing, try the linked coll record
-		var lat = attr.Latitude;
 
-		//const long = attr.Latitude ?? coll.switrsColl.Latitude ?? coll.localColl.Latitude;
+		var lat = attr.Latitude;
 		var long = attr.Longitude;
 
 
@@ -975,7 +976,6 @@ async function addMarkers( collisionJson, histYearData, histHourData, histFaultD
 			var msg = collisionPopup(attr);
 
 			if (pointerFine) {
-				//marker.bindTooltip(msg).openTooltip(); can copy from tooltip!
 				marker.bindPopup(msg).openPopup();
 			} else {
 				marker.bindPopup(msg).openPopup();
@@ -991,12 +991,15 @@ async function addMarkers( collisionJson, histYearData, histHourData, histFaultD
 			skipped++;
 		}
 	}
+	const processTime = getMS();
+
 	console.log('Skipped', skipped);
 	console.log('Plotted', plotted);
 	console.log("markerCount ", markerCount)
 
 	const summaryMsg = '<br>Matching Collsions: ' + plotted //;//+ '<br>' + 'Skipped: ' + skipped + '<br>';
 		+ '<br>Crashes Loaded: ' + countLoadedCrashses()
+		+ '<br>Processing time: ' + processTime + ' ms'
 		+ '<br>Heap Used: ' + getHeapUsed();
 	summary.innerHTML = summaryMsg;
 
@@ -1207,7 +1210,7 @@ async function handleFilterClick() {
 
 	var collData;
 
-	legendCrash.remove();
+	//legendCrash.remove();
 
 	var legend = legendCrash;
 	
