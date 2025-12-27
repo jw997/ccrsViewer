@@ -40,10 +40,22 @@ const saveanchor = document.getElementById('saveanchor')
 const countyCityJsonFile = './data/county_cities.json';
 const countyCityJSON = await getJson(countyCityJsonFile);
 
-// test get a file from other repo
-const testurl = 'https://jw997.github.io/osm-intersections/data/intersections/intersections_alamedacounty.json'
+const countyCityLocationsJsonFile = './data/CountyCityLocations.json';
+const countCityLocationsJson = await getJson(countyCityLocationsJsonFile);
 
-const testJson = await getJson(testurl);
+const mapNameToCenter = new Map();
+
+
+for (const row of countCityLocationsJson) {
+	
+	const name = row.name;
+	const lat = row.lat;
+	const lng = row.lng;
+
+	if (name && lat && lng) {
+		mapNameToCenter.set(name, { lat: lat, lng: lng });  // ready to feed to Leafleft map.panTo()
+	}
+}
 
 // populate the city select
 function populateSelect(selectData, select) {
@@ -90,6 +102,14 @@ function handleSelectCountyChange(event) {
 	const county = selectCounty.value;
 	const arrCities = ["Any", "Unincorporated"].concat(getCitiesForCounty(county));
 	populateSelect(arrCities, selectCity)
+
+	if (map) {
+		const center = mapNameToCenter.get(county);
+		if (center) {
+			map.panTo(center);
+		}
+	}
+
 }
 selectCounty.addEventListener('change', (event) => {
 	handleSelectCountyChange(event);
@@ -120,6 +140,12 @@ selectCity.addEventListener('change', async (event) => {
 	const city = selectCity.value;
 	const arrStreets = ['Any'].concat(await getStreetsForCountyCity(county, city));
 	populateSelect(arrStreets, selectStreet)
+	if (map) {
+		const center = mapNameToCenter.get(city);// ??  mapNameToCenter.get(county) ;
+		if (center) {
+			map.panTo(center);
+		}
+	}
 });
 
 
