@@ -471,7 +471,7 @@ getMS();
 const popupFields = ['Date',
 	'Time',
 
-	'Case_Number',
+	'CollisionId',
 
 	'Local_Report_Number',
 	'Accident_Location',
